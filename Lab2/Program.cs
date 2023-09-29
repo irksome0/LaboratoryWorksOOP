@@ -9,15 +9,29 @@ namespace LaboratoryWork2
             ArraySegment<int> segment;
             private int max = 0, min = 0;
             private int maxId = 0, minId = 0;
+            private int product = 1;
+
             public Task1(int n)
             {
-                int[] array = new int[n];
-                segment = new ArraySegment<int>(array);
-                getNumbers();
-                sortArray();
+                try
+                {
+                    int[] array = new int[n];
+                    segment = new ArraySegment<int>(array);
+                    getNumbers();
+                    sortArray();
+                    searchMin();
+                    searchMax();
+                    calculateProduct();
+                }
+                catch(OverflowException e)
+                {
+                    Console.WriteLine("Масив не може мати вiд'ємну кiлькiсть елементiв");
+                    int[] array = new int[0];
+                    segment = new ArraySegment<int>(array);
+                }
             }
 
-            public void getNumbers()
+            private void getNumbers()
             {
                 for (int i = 0; i < segment.Count; i++)
                 {
@@ -27,16 +41,23 @@ namespace LaboratoryWork2
             public int getSumOfPositiveNumbers()
             {
                 int sum = 0;
-                foreach (int i in segment)
+                try
                 {
-                    if (i >= 0)
+                    foreach (int i in segment)
                     {
-                        sum += i;
+                        if (i >= 0)
+                        {
+                            sum += i;
+                        }
                     }
+                }
+                catch(InvalidOperationException e)
+                {
+                    Console.WriteLine(e);
                 }
                 return sum;
             }
-            public void sortArray()
+            private void sortArray()
             {
                 for (int i = 0; i < segment.Count - 1; i++)
                 {
@@ -51,11 +72,12 @@ namespace LaboratoryWork2
                     }
                 }
             }
-            public void searchMax()
+            private void searchMax()
             {
                 if (Math.Abs(segment[0]) > Math.Abs(segment[^1]))
                 {
                     max = segment[0];
+                    maxId = 0;
                 }
                 else
                 {
@@ -63,19 +85,37 @@ namespace LaboratoryWork2
                     maxId = segment.Count - 1;
                 }
             }
-            public void searchMin()
+            private void searchMin()
             {
                 min = segment[^1];
+                minId = segment.Count - 1;
                 if (min < 0)
                 {
-                    int minId = segment.Count - 1;
                     while(min < 0) { 
-                        min = segment[i];
+                        min = segment[minId];
                         minId--;
                     }
-                    if(Math.Abs(min) > segment[i + 1])
+                    if(Math.Abs(min) > segment[minId + 1])
                     {
-                        min = segment[i + 1];
+                        min = segment[minId + 1];
+                    }
+                }
+
+            }
+            private void calculateProduct()
+            {
+                if(minId < maxId)
+                {
+                    for(int i = minId + 1; i < maxId; i++)
+                    {
+                        product *= segment[i];
+                    }
+                }
+                else
+                {
+                    for (int i = maxId; i < minId; i++)
+                    {
+                        product *= segment[i];
                     }
                 }
             }
@@ -83,26 +123,31 @@ namespace LaboratoryWork2
             {
                 Console.WriteLine(min);
                 Console.WriteLine(max);
+                Console.WriteLine(product);
+                Console.WriteLine(getSumOfPositiveNumbers());
             }
             public void show()
             {
-                foreach (int i in segment)
-                {
-                    Console.WriteLine(i);
-                }
+                Console.Write("[");
+                Console.Write(string.Join(',', segment));
+                Console.Write("]");
             }
         }
         public static void Main(string[] args)
         {
             int n;
-            n = Convert.ToInt32(Console.ReadLine());
+            try
+            {
+                n = Convert.ToInt32(Console.ReadLine());
 
-            Task1 a = new Task1(n);
-            Console.WriteLine("A sum of positive numbers: " + a.getSumOfPositiveNumbers());
-            a.searchMin();
-            a.searchMax();
-            a.see();
-            a.show();
+                Task1 task1 = new Task1(n);
+                task1.see();
+                task1.show();
+            }
+            catch (OverflowException e)
+            {
+                Console.WriteLine("Введене число вийшло за рамки норми.");
+            }
         }
     }
 }
