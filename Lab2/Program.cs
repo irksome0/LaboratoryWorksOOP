@@ -258,6 +258,10 @@ namespace LaboratoryWork2
             }
         }
     }
+    public class Task4
+    {
+
+    }
     internal class Program
     {
         private static void task1()
@@ -296,11 +300,29 @@ namespace LaboratoryWork2
             str = Console.ReadLine();
             Task3 task3 = new Task3(str);
         }
+        private static void task4()
+        {
+            Task4 task4 = new Task4();
+        }
         public static void Main(string[] args)
         {
+            Console.Write("Виберiть варiант завдання: ");
+            char choice = Console.ReadKey();
+            switch (choice)
+            {
+                case '1':
             task1();
+                    break;
+                case '2':
             task2();
+                    break;
+                case '3':
             task3();
+                    break;
+                case '4':
+                    task4();
+                    break;
+            }
         }
     }
 }
