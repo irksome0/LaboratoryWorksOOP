@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Transactions;
+using System.Xml.Linq;
 
 namespace LaboratoryWork2
 {
@@ -360,7 +361,7 @@ namespace LaboratoryWork2
     }
     public class DataBase
     {
-        protected static Random random = new Random();
+        protected static readonly Random random = new Random();
         protected List<Owner> owners;
         public DataBase()
         {
@@ -392,7 +393,7 @@ namespace LaboratoryWork2
             public string city;
             public override string ToString()
             {
-                return $"{firstName}, {lastName}, {phoneNumber}, {city}, contracts: {contracts.Count}";
+                return $"{firstName}, {lastName}, {phoneNumber}, {city}, Кiлькiсть контрактiв: {contracts.Count}";
             }
         }
         protected struct Contract
@@ -449,7 +450,7 @@ namespace LaboratoryWork2
 Кiнець договору:{contractEndDate}";
 
 
-                    
+
             }
         }
         protected struct securityAlarms
@@ -457,23 +458,35 @@ namespace LaboratoryWork2
             public string date;
             public string reason;
         }
-        public void AddOwner(string fname, string sname, string phoneNumber, string city)
+        public virtual void AddOwner()
         {
-            Owner owner = new Owner(fname, sname, phoneNumber, city);
+            Console.Write("Введiть ваше iм'я: ");
+            string firstName = Console.ReadLine();
+            Console.Write("Введiть ваше прiзвище: ");
+            string lastName = Console.ReadLine();
+            Console.Write("Введiть ваш номер телефону: ");
+            string phoneNumber = Console.ReadLine();
+            Console.Write("Введiть ваше мiсто: ");
+            string city = Console.ReadLine();
+
+            Owner owner = new Owner(firstName, lastName, phoneNumber, city);
+
             owners.Add(owner);
+
+            Console.WriteLine("Вас успiшно додано в систему!");
         }
-        public void AddContract(string firstName, string address, string apNumber, double penalty, double insurance, string start, string end)
+        public virtual void AddContract(string firstName, string address, string apNumber, double penalty, double insurance, string start, string end)
         {
-            foreach(var owner in owners)
+            foreach (var owner in owners)
             {
-                if(owner.firstName.Equals(firstName))
+                if (owner.firstName.Equals(firstName))
                 {
                     Contract contract = new Contract(address, apNumber, penalty, insurance, start, end);
                     owner.contracts.Add(contract);
                 }
             }
         }
-        public void show()
+        public virtual void show()
         {
             foreach (var owner in owners)
             {
@@ -488,29 +501,77 @@ namespace LaboratoryWork2
                 Console.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++");
             }
         }
+        public virtual void showOwners()
+        {
+            Console.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++");
+            foreach (var owner in owners)
+            {
+                Console.WriteLine(owner.ToString());
+            }
+            Console.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++");
+        }
     }
-    public class Task4: DataBase
+    public class Task4 : DataBase
     {
         DataBase db;
         public Task4()
         {
             db = new DataBase();
         }
-        public void AddOwner(string fname, string sname, string phoneNumber, string city)
+        public override void AddOwner()
         {
-            db.AddOwner(fname, sname, phoneNumber, city);
+            db.AddOwner();
         }
-        public void AddContract(string firstName, string address, string apNumber, double penalty, double insurance, string start, string end)
+        public override void AddContract(string firstName, string address, string apNumber, double penalty, double insurance, string start, string end)
         {
             db.AddContract(firstName, address, apNumber, penalty, insurance, start, end);
         }
 
-        public void show()
+        public override void show()
         {
             db.show();
         }
+        public override void showOwners()
+        {
+            db.showOwners();
+        }
+        public void menu()
+        {
+            bool flag = true;
+            string choice = "";
+            while (flag) {
+                Console.WriteLine("========================");
+                Console.WriteLine("1) Вiдобразити всi данi:");
+                Console.WriteLine("2) Вiдобразити всiх власникiв квартир:");
+                Console.WriteLine("3) Додати власника квартири:");
+                Console.WriteLine("4) Укласти контракт:");
+                Console.WriteLine("5) Пошук власникiв по iменi/фамiлiї/номеру телефона/мiсту");
+                Console.Write("Виберiть дiю: ");
+                choice = Console.ReadLine();
+                Console.WriteLine("========================");
+                switch (choice)
+                {
+                    case "1":
+                        show();
+                        break;
+                    case "2":
+                        showOwners();
+                        break;
+                    case "3":
+                        AddOwner();
+                        break;
+                    case "4":
+                        break;
+                    case "5":
+                        break;
+                    default:
+                        flag = false;
+                        break;
+                }
+            }
+        }
     }
-    internal class Program
+    internal static class Program
     {
         private static void task1()
         {
@@ -533,7 +594,7 @@ namespace LaboratoryWork2
         {
             int n, k;
             Console.Write("Кiлькiсть елементiв масиву: ");
-            
+
             n = Convert.ToInt32(Console.ReadLine());
             Console.Write("Кiлькiсть елементiв масиву: ");
             k = Convert.ToInt32(Console.ReadLine());
@@ -552,15 +613,12 @@ namespace LaboratoryWork2
         private static void task4()
         {
             Task4 task4 = new Task4();
-            task4.AddOwner("Андрiй", "Молдавчук", "096-95-32-334", "Тернопiль");
-            task4.AddOwner("Олександр", "Боярчук", "054-33-54-751", "Хмельницький");
-            task4.AddOwner("Iгор", "Гида", "097-12-54-912", "Житомир");
             task4.AddContract("Олександр", "вул.Гуртожитська 6", "123322531", 400.30, 5000, "2003/05/13", "2006/06/13");
             task4.AddContract("Олександр", "вул.Кринички 7", "125312234", 400.30, 5000, "2003/03/13", "2006/06/13");
             task4.AddContract("Олександр", "вул.Шашлична 2", "12665542", 400.30, 5000, "2003/05/13", "2006/06/13");
             task4.AddContract("Iгор", "вул.Ринкова 43", "1261242", 400.30, 5000, "2003/05/13", "2006/06/13");
             task4.AddContract("Толя", "вул.Бахмутська 9", "12544342", 400.30, 5000, "2003/05/13", "2006/06/13");
-            task4.show();
+            task4.menu();
         }
         public static void Main(string[] args)
         {
