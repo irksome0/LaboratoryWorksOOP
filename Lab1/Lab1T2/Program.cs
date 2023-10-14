@@ -37,10 +37,26 @@ namespace LaboratoryWork1
             return result;
         }
     }
+    //Task 3
+    class Solution
+    {
+        public double Y(double s, double t)
+        {
+            return G(1.2, t) + G(t, s) - G(2 * s - 1, s * t);
+        }
+        
+        private double G(double a, double b)
+        {
+            double result = 0;
+            result = (Math.Pow(a, 2) + Math.Pow(b, 2)) / (Math.Pow(a, 2) + 2 * a * b + 3 * Math.Pow(b, 2) + 4);
+            return result;
+        }
+    }
     internal static class Task2
     {
         public static void Main(string[] args)
         {
+            //Task 1
             Func func = new Func();
             double a, x;
 
@@ -49,7 +65,8 @@ namespace LaboratoryWork1
             x = Convert.ToDouble(Console.ReadLine());
 
             Console.WriteLine(func.Y(a, x));
-            
+
+            //Task 2
             Mersenne func = new Mersenne();
 
             int n;
@@ -58,6 +75,17 @@ namespace LaboratoryWork1
 
             var y = func.FindAll(n);
             Console.WriteLine("[" + String.Join(',',y) + "]");
+
+            //Task 3
+            Solution func = new Solution();
+
+            double s, t;
+
+            Console.WriteLine("Enter s and t:");
+            s = Convert.ToDouble(Console.ReadLine());
+            t = Convert.ToDouble(Console.ReadLine());
+
+            Console.WriteLine("Result is: " + func.Y(s, t));
         }
     }
 }
