@@ -2,6 +2,17 @@
 
 namespace LaboratoryWork1
 {
+    //Task 1
+    class Func
+    {
+        public double Y(double a, double x)
+        {
+            double y = 0;
+            y = Math.Log2(x - 4) + Math.Pow(Math.E, 2 * a - x);
+            return y;
+        }
+    }
+    //Task 2
     class Mersenne
     {
         public List<int> FindAll(int n)
@@ -30,6 +41,15 @@ namespace LaboratoryWork1
     {
         public static void Main(string[] args)
         {
+            Func func = new Func();
+            double a, x;
+
+            Console.WriteLine("Enter a and x:");
+            a = Convert.ToDouble(Console.ReadLine());
+            x = Convert.ToDouble(Console.ReadLine());
+
+            Console.WriteLine(func.Y(a, x));
+            
             Mersenne func = new Mersenne();
 
             int n;
