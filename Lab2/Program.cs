@@ -393,7 +393,7 @@ namespace LaboratoryWork2
             public string city;
             public override string ToString()
             {
-                return $"{firstName}, {lastName}, {phoneNumber}, {city}, Кiлькiсть контрактiв: {contracts.Count}";
+                return $"{firstName}, {lastName}, {phoneNumber}, {city}. Кiлькiсть контрактiв: {contracts.Count}";
             }
         }
         protected struct Contract
@@ -475,18 +475,134 @@ namespace LaboratoryWork2
 
             Console.WriteLine("Вас успiшно додано в систему!");
         }
-        public virtual void AddContract(string firstName, string address, string apNumber, double penalty, double insurance, string start, string end)
+        private void ProcessContract()
         {
-            foreach (var owner in owners)
+            Console.Write("Виберiть користувача по номеру: ");
+            string choice = Console.ReadLine();
+            Console.Write("Введiть ваш адрес:");
+            string address = Console.ReadLine();
+            Console.Write("Введiть квартирний номер: ");
+            string apNumber = Console.ReadLine();
+            Console.Write("Введiть суму страхування: ");
+            double insurance = Convert.ToDouble(Console.ReadLine());
+            Contract cont = new Contract(address, apNumber, insurance * 0.15, insurance, Convert.ToString(DateTime.Now), Convert.ToString(DateTime.Now.AddYears(5)));
+            owners[Convert.ToInt32(choice) - 1].contracts.Add(cont);
+        }
+        public virtual void AddContract()
+        {
+            Console.Write("Введiть ваше iм'я: ");
+            string name = Console.ReadLine();
+
+            bool foundUser = false;
+            for(int i = 0; i < owners.Count; i++)
             {
-                if (owner.firstName.Equals(firstName))
+                if (owners[i].firstName == name)
                 {
-                    Contract contract = new Contract(address, apNumber, penalty, insurance, start, end);
-                    owner.contracts.Add(contract);
+                    Console.WriteLine($"{i + 1}.{owners[i].ToString()}");
+                    foundUser = true;
+                }
+            }
+            if (!foundUser)
+            {
+                Console.WriteLine("=========== Користувача не знайдено в системi ===========");
+                Console.WriteLine("1. Додати користувача");
+                Console.WriteLine("2. Спробувати знову");
+                Console.Write(">> ");
+                string choice = Console.ReadLine();
+                Console.WriteLine("=========================================================");
+                switch (choice)
+                {
+                    case "1":
+                        AddOwner();
+                        return;
+                    case "2":
+                        AddContract();
+                        return;
+                    default:
+                        return;
+                }
+            }
+            else {
+                ProcessContract();
+            }
+        }
+        public void DeleteUser()
+        {
+            Console.Write("Виберiть користувача по номеру: ");
+            string choice = Console.ReadLine();
+            owners.RemoveAt(Convert.ToInt32(choice));
+            Console.WriteLine("Користувача видалено!");
+        }
+        public virtual void Search()
+        {
+            Console.WriteLine("Введiть данi для пошуку(iм'я, прiзвище, номер телефону, мiсто):");
+            string request = Console.ReadLine();
+            bool foundUser = false;
+            for(var i = 0; i < owners.Count; i++)
+            {
+                if (owners[i].firstName == request || owners[i].lastName == request ||
+                    owners[i].phoneNumber == request || owners[i].city == request)
+                {
+                    Console.WriteLine($"{i + 1}. {owners[i].ToString()}");
+                    foundUser = true;
+                }
+            }
+            if (!foundUser)
+            {
+                Console.WriteLine("=========== Користувача не знайдено в системi ===========");
+                Console.WriteLine("1. Додати користувача");
+                Console.WriteLine("2. Спробувати знову");
+                Console.Write(">> ");
+                string choice = Console.ReadLine();
+                Console.WriteLine("=========================================================");
+                switch (choice)
+                {
+                    case "1":
+                        AddOwner();
+                        return;
+                    case "2":
+                        Search();
+                        return;
+                    default:
+                        return;
+                }
+            }
+            else
+            {
+                Console.WriteLine("=========== Виберiть дiю ===========");
+                Console.WriteLine("1. Додати контракт");
+                Console.WriteLine("2. Видалити користувача");
+                Console.WriteLine("3. Показати контракти");
+                Console.Write(">> ");
+                string choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "1":
+                        ProcessContract();
+                        return;
+                    case "2":
+                        DeleteUser();
+                        return;
+                    case "3":
+                        ShowContract();
+                        return;
+                    default:
+                        return;
                 }
             }
         }
-        public virtual void show()
+        public virtual void ShowContract()
+        {
+            Console.Write("Виберiть користувача по номеру: ");
+            string choice = Console.ReadLine();
+            foreach (var con in owners[Convert.ToInt32(choice) - 1].contracts)
+            {
+                Console.WriteLine("==============================================");
+                Console.WriteLine(con.toString());
+                Console.WriteLine("==============================================");
+            }
+        }
+        public virtual void Show()
         {
             foreach (var owner in owners)
             {
@@ -501,7 +617,7 @@ namespace LaboratoryWork2
                 Console.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++");
             }
         }
-        public virtual void showOwners()
+        public virtual void ShowOwners()
         {
             Console.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++");
             foreach (var owner in owners)
@@ -522,18 +638,22 @@ namespace LaboratoryWork2
         {
             db.AddOwner();
         }
-        public override void AddContract(string firstName, string address, string apNumber, double penalty, double insurance, string start, string end)
+        public override void AddContract()
         {
-            db.AddContract(firstName, address, apNumber, penalty, insurance, start, end);
+            db.AddContract();
         }
 
-        public override void show()
+        public override void Show()
         {
-            db.show();
+            db.Show();
         }
-        public override void showOwners()
+        public override void ShowOwners()
         {
-            db.showOwners();
+            db.ShowOwners();
+        }
+        public override void Search()
+        {
+            db.Search();
         }
         public void menu()
         {
@@ -552,17 +672,19 @@ namespace LaboratoryWork2
                 switch (choice)
                 {
                     case "1":
-                        show();
+                        Show();
                         break;
                     case "2":
-                        showOwners();
+                        ShowOwners();
                         break;
                     case "3":
                         AddOwner();
                         break;
                     case "4":
+                        AddContract();
                         break;
                     case "5":
+                        Search();
                         break;
                     default:
                         flag = false;
@@ -613,11 +735,6 @@ namespace LaboratoryWork2
         private static void task4()
         {
             Task4 task4 = new Task4();
-            task4.AddContract("Олександр", "вул.Гуртожитська 6", "123322531", 400.30, 5000, "2003/05/13", "2006/06/13");
-            task4.AddContract("Олександр", "вул.Кринички 7", "125312234", 400.30, 5000, "2003/03/13", "2006/06/13");
-            task4.AddContract("Олександр", "вул.Шашлична 2", "12665542", 400.30, 5000, "2003/05/13", "2006/06/13");
-            task4.AddContract("Iгор", "вул.Ринкова 43", "1261242", 400.30, 5000, "2003/05/13", "2006/06/13");
-            task4.AddContract("Толя", "вул.Бахмутська 9", "12544342", 400.30, 5000, "2003/05/13", "2006/06/13");
             task4.menu();
         }
         public static void Main(string[] args)
