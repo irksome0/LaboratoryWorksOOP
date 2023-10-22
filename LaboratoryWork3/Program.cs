@@ -1,7 +1,7 @@
 ﻿namespace LaboratoryWork3
 {
-    // Клас, що містить інформацію про певну людину
-    // В даному випадку цей клас містить інформацію про автора певної статті
+    // Class that contains info about some person
+    // Used to contain information about authors of articles
     public class Person
     {
         private string firstName;
@@ -62,7 +62,7 @@
             return $"{firstName}, {surName}";
         }
     }
-    // Тип, що визначає частоту виходу
+    // Enum field for frequency of releases
     public enum Frequency
     {
         Weekly,
@@ -70,7 +70,7 @@
         Yearly
     }
 
-    // Клас для статтей, що містить інформацію про автора типу Person
+    // Class for articles that also contains info about actile author
     public class Article: Person
     {
         public readonly Person author;
@@ -85,7 +85,8 @@
             return $"Author: {author.ToString()}\nArticle: {nameOfArticle}, Rating: {rating}";
         }
     }
-    // Клас журналів, що містить різноманітні статті
+
+    // Class for magazines. Contains articles
     public class Magazine: Article
     {
         private readonly string name;
@@ -128,7 +129,7 @@
             return sum / articles.Count;
         }
 
-        // ПОБУДУВАТИ ІНДЕКСАТОР
+        // BUILD INDEXATOR
 
         public void AddArticle(Article article)
         {
