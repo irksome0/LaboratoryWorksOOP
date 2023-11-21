@@ -1,4 +1,6 @@
-﻿namespace LaboratoryWork3
+﻿using System.Runtime.CompilerServices;
+
+namespace LaboratoryWork3
 {
     // Class that contains info about some person
     // Used to contain information about authors of articles
@@ -65,9 +67,9 @@
     // Enum field for frequency of releases
     public enum Frequency
     {
-        Weekly,
-        Monthly,
-        Yearly
+        Weekly = 2,
+        Monthly = 8,
+        Yearly = 96
     }
 
     // Class for articles that also contains info about actile author
@@ -87,10 +89,10 @@
     }
 
     // Class for magazines. Contains articles
-    public class Magazine: Article
+    public class Magazine : Article
     {
         private readonly string name;
-        private readonly Frequency frequency;
+        private Frequency frequency;
         private readonly DateTime date;
         private readonly int amount;
         private List<Article> articles;
@@ -102,9 +104,19 @@
         {
             return name;
         }
-        public Frequency GetFrequency()
+        public Frequency GetFrequency(int index)
         {
-            return frequency;
+            switch (index)
+            {
+                case 0:
+                    return Frequency.Weekly;
+                case 1:
+                    return Frequency.Monthly;
+                case 2:
+                    return Frequency.Yearly;
+                default:
+                    return 0;
+            }
         }
         public DateTime GetDate()
         {
@@ -129,7 +141,10 @@
             return sum / articles.Count;
         }
 
-        // BUILD INDEXATOR
+        public Frequency this[int index]
+        {
+            get => GetFrequency(index);
+        }
 
         public void AddArticle(Article article)
         {
@@ -160,6 +175,56 @@
     {
         public static void Main(string[] args)
         {
+            int nrow, ncol;
+            Console.Write("Enter rows and columns separated by a space: ");
+            string input = Console.ReadLine();
+            string[] sep = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            nrow = Convert.ToInt16(sep[0]);
+            ncol = Convert.ToInt16(sep[1]);
+
+            int[] lineArray = new int[nrow * ncol];
+            int[,] rectangularArray = new int[nrow, ncol];
+            int[][] jaggedArray = new int[nrow][];
+            for(int i = 0; i < nrow; i++)
+            {
+                jaggedArray[i] = new int[ncol];
+            }
+
+            for (int i = 0; i < nrow * ncol; i++)
+            {
+                lineArray[i] = i;
+                rectangularArray[i / ncol, i % ncol] = i;
+                jaggedArray[i / ncol][i % ncol] = i;
+            }
+
+            int start = Environment.TickCount;
+            for(int i = 0; i < nrow * ncol; i++)
+            {
+                lineArray[i] = lineArray[i] * 2;
+            }
+            int end = Environment.TickCount;
+            Console.WriteLine($"Line array time: {end - start}");
+
+            start = Environment.TickCount;
+            for (int i = 0; i < nrow; i++){
+                for(int j = 0; j < ncol; j++)
+                {
+                    rectangularArray[i, j] = rectangularArray[i, j] * 2;
+                }
+            }
+            end = Environment.TickCount;
+            Console.WriteLine($"Rectangular array time: {end - start}");
+
+            start = Environment.TickCount;
+            for (int i = 0; i < nrow; i++){
+                for (int j = 0; j < ncol; j++)
+                {
+                    jaggedArray[i][j] = jaggedArray[i][j] * 2;
+                }
+            }
+            end = Environment.TickCount;
+            Console.WriteLine($"Jagged array time: {end - start}");
+
             var articles = new List<Article>();
             Frequency freq = Frequency.Weekly;
             articles.Add(new Article(new Person("Jong", "Chunk", DateTime.Now), "Week", 9.9));
@@ -170,6 +235,7 @@
             Console.WriteLine(magazine.ToShortString());
             Console.WriteLine("============================");
             Console.WriteLine(magazine.ToString());
+            Console.WriteLine(magazine[2]);
         }
     }
 }
