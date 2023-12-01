@@ -108,11 +108,6 @@ func main() {
 	weekleyMagazineCopy.articles[0].nameOfArticle = "Astro"
 	weekleyMagazineCopy.edition.name = "Monthley"
 
-	//
-	// ???
-	// ПРИ ЗАСТОСУВАННІ DeepCopy() І ЗМІНІ В КОПІЇ ДАНИХ В ОРИГІНАЛІ ТАКОЖ ДАНІ ЗМІНЮЮТЬСЯ +
-	// ???
-	//
 	fmt.Printf("Оригінал:\n%s\n", weekleyMagazine.toString())
 	fmt.Printf("Змінена копія:\n%s\n", weekleyMagazineCopy.toString())
 
